@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: process-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: process
+    template:
+        metadata:
+            labels:
+                app: process
+        spec:
+            containers:
+                - name: process
+                  image: kneonix/process:latest
+                  imagePullPolicy: Never
+                  env:
+                      - name: KAFKA_BROKER_URI
+                        valueFrom:
+                            secretKeyRef:
+                                name: shared-secret
+                                key: KAFKA_BROKER_URI
+                      - name: PORT
+                        value: "3000"
+                      - name: MONGO_URL
+                        value: "mongodb://process-mongo-srv:27017"
+                      - name: REDIS_HOST
+                        value: "expiration-redis-srv"
+                      - name: REDIS_PORT
+                        value: "6379"
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: process-clusterip-srv
+spec:
+    selector:
+        app: process
+    ports:
+        - name: process
+          protocol: TCP
+          port: 3000
+          targetPort: 3000

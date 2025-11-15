@@ -1,0 +1,28 @@
+apiVersion: skaffold/v4beta12
+kind: Config
+manifests:
+    rawYaml:
+        - ./infra/k8s/*
+deploy:
+    kubectl: {}
+build:
+    local:
+        push: false
+    artifacts:
+        - image: kneonix/process
+          context: process
+          sync:
+              manual:
+                  - src: src/**/*.ts
+                    dest: .
+          docker:
+              dockerfile: Dockerfile
+
+        - image: kneonix/agent
+          context: agent
+          sync:
+              manual:
+                  - src: "src/**/*.ts"
+                    dest: .
+          docker:
+              dockerfile: Dockerfile

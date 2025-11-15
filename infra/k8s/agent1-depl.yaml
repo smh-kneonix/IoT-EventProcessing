@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: agent-one-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: agent-one
+    template:
+        metadata:
+            labels:
+                app: agent-one
+        spec:
+            containers:
+                - name: agent-one
+                  image: kneonix/agent:latest
+                  imagePullPolicy: Never
+                  env:
+                      - name: KAFKA_BROKER_URI
+                        valueFrom:
+                            secretKeyRef:
+                                name: shared-secret
+                                key: KAFKA_BROKER_URI
+                      - name: PORT
+                        value: "3000"
+                      - name: AGENT_ID
+                        value: "1"

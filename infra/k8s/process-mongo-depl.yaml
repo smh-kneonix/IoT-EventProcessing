@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: process-mongo-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: process-mongo
+    template:
+        metadata:
+            labels:
+                app: process-mongo
+        spec:
+            containers:
+                - name: process-mongo
+                  image: mongo:latest
+                  imagePullPolicy: IfNotPresent
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: process-mongo-srv
+spec:
+    selector:
+        app: process-mongo
+    ports:
+        - name: process-mongodb
+          protocol: TCP
+          port: 27017
+          targetPort: 27017
