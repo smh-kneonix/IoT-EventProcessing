@@ -26,3 +26,5 @@ spec:
                         value: "3000"
                       - name: AGENT_ID
                         value: "1"
+                      - name: KAFKA_TOPIC
+                        value: "agent-events"

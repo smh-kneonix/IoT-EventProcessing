@@ -30,6 +30,8 @@ spec:
                         value: "expiration-redis-srv"
                       - name: REDIS_PORT
                         value: "6379"
+                      - name: KAFKA_TOPIC
+                        value: "agent-events"
 ---
 apiVersion: v1
 kind: Service
