@@ -32,7 +32,7 @@ export class KafkaModule implements OnModuleInit {
           },
         ],
       });
-      console.log(`🚀 Created Topic: ${process.env.KAFKA_TOPIC}`);
+      console.log(`Created Topic: ${process.env.KAFKA_TOPIC}`);
     }
 
     await admin.disconnect();

@@ -1,23 +1,36 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { Producer } from 'kafkajs';
-import { KafkaMessage, KafkaMessageValue } from '@kneonix-part/common';
+import {
+  KafkaMessage,
+  KafkaMessageKey,
+  KafkaMessageValue,
+} from '@kneonix-part/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { faker } from '@faker-js/faker';
 
 @Injectable()
-export class AppService {
+export class KafkaService {
   constructor(
     @Inject('KAFKA_PRODUCER')
     private readonly producer: Producer,
   ) {}
 
-  async sendEvent(event: Omit<KafkaMessageValue, 'agentId' | 'timestamp'>) {
+  private generateRandomEvent(): KafkaMessageValue {
+    const possibleKeys = Object.values(KafkaMessageKey);
+    const key = faker.helpers.arrayElement(possibleKeys);
+
+    return {
+      agentId: process.env.AGENT_ID!,
+      name: key,
+      value: faker.number.float({ min: 0, max: 100 }),
+      timestamp: Date.now(),
+    };
+  }
+
+  private async sendEvent(event: KafkaMessageValue) {
     const message: KafkaMessage = {
       key: event.name,
-      value: {
-        agentId: process.env.AGENT_ID!,
-        name: event.name,
-        value: event.value,
-        timestamp: Date.now(),
-      },
+      value: event,
     };
 
     await this.producer.send({
@@ -29,7 +42,11 @@ export class AppService {
         },
       ],
     });
+  }
 
-    console.log('Sent Event:', message);
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  async handleCron() {
+    const event = this.generateRandomEvent();
+    await this.sendEvent(event);
   }
 }

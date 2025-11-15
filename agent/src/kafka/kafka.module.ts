@@ -1,9 +1,11 @@
 import { Module, Global } from '@nestjs/common';
 import { Kafka, Producer, Admin } from 'kafkajs';
+import { KafkaService } from './kafka.service';
 
 @Global()
 @Module({
   providers: [
+    KafkaService,
     {
       provide: 'KAFKA_PRODUCER',
       useFactory: async () => {

@@ -1,26 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { KafkaModule } from './kafka/kafka.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [
-    ClientsModule.register([
-      {
-        name: 'KAFKA_PRODUCER',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: `agent-${process.env.AGENT_ID}`,
-            brokers: [process.env.KAFKA_BROKER_URI!],
-          },
-          consumer: {
-            groupId: 'AGENT_CONSUMER_GROUP',
-          },
-        },
-      },
-    ]),
-    KafkaModule,
-  ],
+  imports: [ScheduleModule.forRoot(), KafkaModule],
   controllers: [],
   providers: [],
 })
