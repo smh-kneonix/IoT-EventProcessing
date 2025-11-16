@@ -26,10 +26,8 @@ spec:
                         value: "3000"
                       - name: MONGO_URL
                         value: "mongodb://process-mongo-srv:27017"
-                      - name: REDIS_HOST
-                        value: "expiration-redis-srv"
-                      - name: REDIS_PORT
-                        value: "6379"
+                      - name: REDIS_URI
+                        value: "redis://process-redis-srv:6379"
                       - name: KAFKA_TOPIC
                         value: "agent-events"
 ---

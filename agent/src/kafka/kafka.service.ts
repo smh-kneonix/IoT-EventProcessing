@@ -44,7 +44,7 @@ export class KafkaService {
     });
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_30_SECONDS)
   async handleCron() {
     const event = this.generateRandomEvent();
     await this.sendEvent(event);

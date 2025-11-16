@@ -2,9 +2,11 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { Kafka, Consumer, Admin } from 'kafkajs';
 import { KafkaService } from './kafka.service';
 import { KafkaMessageValue } from '@kneonix-part/common';
+import { EventModule } from '../event/event.module';
 
 @Module({
   providers: [KafkaService],
+  imports: [EventModule],
 })
 export class KafkaModule implements OnModuleInit {
   private consumer: Consumer;
