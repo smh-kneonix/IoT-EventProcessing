@@ -3,10 +3,11 @@ import { Kafka, Consumer, Admin } from 'kafkajs';
 import { KafkaService } from './kafka.service';
 import { KafkaMessageValue } from '@kneonix-part/common';
 import { EventModule } from '../event/event.module';
+import { MatchingModule } from '../matching/matching.module';
 
 @Module({
   providers: [KafkaService],
-  imports: [EventModule],
+  imports: [EventModule, MatchingModule],
 })
 export class KafkaModule implements OnModuleInit {
   private consumer: Consumer;

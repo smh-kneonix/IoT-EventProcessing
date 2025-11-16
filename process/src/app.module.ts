@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RedisModule } from './redis/redis.module';
 import { EventModule } from './event/event.module';
 import { RuleModule } from './rule/rule.module';
+import { MatchingModule } from './matching/matching.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { RuleModule } from './rule/rule.module';
     KafkaModule,
     EventModule,
     RuleModule,
+    MatchingModule,
   ],
   controllers: [],
   providers: [],

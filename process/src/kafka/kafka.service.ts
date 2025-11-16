@@ -1,22 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { KafkaMessageValue, KafkaMessageKey } from '@kneonix-part/common';
+import { KafkaMessageValue } from '@kneonix-part/common';
 import { EventService } from '../event/event.service';
+import { MatchingService } from '../matching/matching.service';
 
 @Injectable()
 export class KafkaService {
-  constructor(private readonly eventService: EventService) {}
+  constructor(
+    private readonly eventService: EventService,
+    private readonly matchingService: MatchingService,
+  ) {}
 
   async handleEvent(event: KafkaMessageValue) {
-    const saved = await this.eventService.save(event);
-    console.log(saved)
 
-    if (event.name === KafkaMessageKey.TEMPERATURE) {
-      // TODO: run rule matching here later
-    }
+    const savedEvent = await this.eventService.save(event);
 
-    if (event.name === KafkaMessageKey.VOLTAGE) {
-    }
-
-    return saved;
+    await this.matchingService.matchEvent(event);
+    console.log(savedEvent)
+    return savedEvent;
   }
 }
