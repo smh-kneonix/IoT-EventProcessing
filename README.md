@@ -64,8 +64,7 @@ Two major reporting endpoints:
 
 A full Postman export (containing all endpoints for Agents, Rules, and Events) is available here:
 
-👉 **[Postman Collection](./postman/export.json)**
-_(Update the relative path based on your repo structure)_
+👉 **[Postman Collection](./part-task.postman_collection.json)**
 
 ---
 

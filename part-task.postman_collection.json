@@ -1,0 +1,259 @@
+{
+	"info": {
+		"_postman_id": "d1ac3a40-558c-4856-9fd5-e51dd43efb9d",
+		"name": "part-task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23617829"
+	},
+	"item": [
+		{
+			"name": "rule",
+			"item": [
+				{
+					"name": "create rule",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"agentId\": \"1\", // leave it \"\" if you want this rule apply to every agent\r\n    \"key\":\"temperature\", //temperature, pressure, voltage, noise, light\r\n    \"operator\": \"<\", //operator must be one of the following values: >, <, >=, <=, ==, !=\r\n    \"value\":20,\r\n    \"timeRange\":100, //milisecond 1 to 86400000\r\n    \"isActive\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://part.dev/rule",
+							"protocol": "https",
+							"host": [
+								"part",
+								"dev"
+							],
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"agentId\": \"\", // leave it \"\" if you want this rule apply to every agent\r\n    \"key\":\"noise\", //temperature, pressure, voltage, noise, light\r\n    \"operator\": \"<=\", //operator must be one of the following values: >, <, >=, <=, ==, !=\r\n    \"value\":150,\r\n    \"timeRange\":500, //milisecond 1 to 86400000\r\n    \"isActive\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://part.dev/rule/:id",
+							"protocol": "https",
+							"host": [
+								"part",
+								"dev"
+							],
+							"path": [
+								"rule",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6919ae280741767938bf9737"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get rules",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://part.dev/rule?page=1&limit=2",
+							"protocol": "https",
+							"host": [
+								"part",
+								"dev"
+							],
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by id",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://part.dev/rule/:id",
+							"protocol": "https",
+							"host": [
+								"part",
+								"dev"
+							],
+							"path": [
+								"rule",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6919ae280741767938bf9737"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by id",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://part.dev/rule/:id",
+							"protocol": "https",
+							"host": [
+								"part",
+								"dev"
+							],
+							"path": [
+								"rule",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6919af1b93974cf2f4b65d78"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "event",
+			"item": [
+				{
+					"name": "find events by agent id",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://part.dev/event/agent/:agentId?page=1&limit=10",
+							"protocol": "https",
+							"host": [
+								"part",
+								"dev"
+							],
+							"path": [
+								"event",
+								"agent",
+								":agentId"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							],
+							"variable": [
+								{
+									"key": "agentId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find events by rule id",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://part.dev/event/rule/:ruleId?page=1&limit=10",
+							"protocol": "https",
+							"host": [
+								"part",
+								"dev"
+							],
+							"path": [
+								"event",
+								"rule",
+								":ruleId"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							],
+							"variable": [
+								{
+									"key": "ruleId",
+									"value": "6919d78df5b86cb42786024f"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
