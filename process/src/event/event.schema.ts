@@ -6,19 +6,18 @@ export type EventDocument = Event & Document;
 
 @Schema({ timestamps: true })
 export class Event {
-  @Prop({ required: true })
+  @Prop({ required: true, type: String })
   agentId: string;
 
-  @Prop({ required: true, enum: KafkaMessageKey })
+  @Prop({ required: true, enum: KafkaMessageKey, type: String })
   name: KafkaMessageKey;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Number })
   value: number;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Number })
   timestamp: number;
 
-  // This will later store rule matches:
   @Prop({ type: [String], default: [] })
   matchedRules: string[];
 }
