@@ -1,0 +1,145 @@
+version: '3.8'
+
+services:
+  # Zookeeper - required by Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: part-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - part-network
+
+  # Kafka Broker
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: part-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_INTERNAL://kafka:9092,PLAINTEXT_EXTERNAL://localhost:29092
+      KAFKA_LISTENERS: PLAINTEXT_INTERNAL://0.0.0.0:9092,PLAINTEXT_EXTERNAL://0.0.0.0:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT_INTERNAL:PLAINTEXT,PLAINTEXT_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+    networks:
+      - part-network
+    healthcheck:
+      test: kafka-broker-api-versions --bootstrap-server localhost:9092
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB
+  mongodb:
+    image: mongo:latest
+    container_name: part-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - part-network
+    command: mongod --noauth
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis
+  redis:
+    image: redis:alpine
+    container_name: part-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - part-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Process Service
+  process:
+    build:
+      context: ./process
+      dockerfile: Dockerfile
+    container_name: part-process
+    depends_on:
+      kafka:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      KAFKA_BROKER_URI: kafka:9092
+      PORT: 3000
+      MONGO_URL: mongodb://mongodb:27017
+      REDIS_URI: redis://redis:6379
+      KAFKA_TOPIC: agent-events
+    networks:
+      - part-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Agent Service 1
+  agent-1:
+    build:
+      context: ./agent
+      dockerfile: Dockerfile
+    container_name: part-agent-1
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_URI: kafka:9092
+      PORT: 3001
+      AGENT_ID: "1"
+      KAFKA_TOPIC: agent-events
+    networks:
+      - part-network
+
+  # Agent Service 2
+  agent-2:
+    build:
+      context: ./agent
+      dockerfile: Dockerfile
+    container_name: part-agent-2
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_URI: kafka:9092
+      PORT: 3002
+      AGENT_ID: "2"
+      KAFKA_TOPIC: agent-events
+    networks:
+      - part-network
+
+networks:
+  part-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  redis_data:
